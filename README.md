@@ -1,7 +1,7 @@
 Font Converter
 ===================
 
-a javafx gui for **[google sfntly](https://github.com/googlei18n/sfntly)** to help subset ttf fonts , convert to ttf/woff/eot.
+a javafx gui for **[google sfntly](https://github.com/googlei18n/sfntly)** to help batch subset ttf fonts , convert to ttf/woff/eot.
 
 ![screenshot](img/screenshot.jpg)
 
@@ -25,5 +25,6 @@ Build
 * build native package
 
 ```
- mvn jfx:native 
+ mvn jfx:native
+ cd target/jfx/native
  ```
