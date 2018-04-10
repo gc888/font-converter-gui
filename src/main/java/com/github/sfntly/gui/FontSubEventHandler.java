@@ -41,7 +41,6 @@ import javafx.scene.control.ToggleGroup;
  *
  * @author ranger
  */
-@SuppressWarnings("restriction")
 public class FontSubEventHandler implements EventHandler<ActionEvent> {
 
     private final TextField directory;
@@ -82,15 +81,14 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
                     File ttf = file.toFile();
                     String fontName = ttf.getName();
                     if ((fontName.endsWith(".ttf") || fontName.endsWith(".TTF"))
-                            && !fontName.contains("min_")) {
+                            && !fontName.contains("_min")) {
                         existTTF = Boolean.TRUE;
                         final FontFactory fontFactory = FontFactory.getInstance();
                         Font newFont = fontFactory.loadFonts(new FileInputStream(ttf))[0];
-                        String fileName = fontName + "_min";
+                        String fileName = removeExt(fontName);
                         boolean hasText = text != null && text.trim().length() != 0;
-                        if (!hasText) {
-                            text = null;
-                            fileName = removeExt(fontName);
+                        if (hasText) {
+                        	fileName = fileName + "_min";
                         }
                         final Font subsetFont = subsetFont(fontFactory, newFont, text, stripHinting);
                         String dirname = format;

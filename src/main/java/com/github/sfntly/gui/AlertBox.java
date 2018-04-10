@@ -19,7 +19,6 @@ import javafx.stage.Stage;
  *
  * @author ranger
  */
-@SuppressWarnings("restriction")
 public class AlertBox {
     
     int width = 250;
@@ -48,7 +47,7 @@ public class AlertBox {
 
         Label label = new Label(message);
 
-        VBox layout = new VBox(50);
+        VBox layout = new VBox(20);
         layout.getChildren().addAll(label, button);
         layout.setAlignment(Pos.CENTER);
 

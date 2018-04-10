@@ -3,7 +3,7 @@ Font Converter
 
 a javafx gui for **[google sfntly](https://github.com/googlei18n/sfntly)** to help batch subset ttf fonts , convert to ttf/woff/eot.
 
-![screenshot](img/screenshot.jpg)
+![screenshot](img/screenshot.png)
 
 
 Requirements

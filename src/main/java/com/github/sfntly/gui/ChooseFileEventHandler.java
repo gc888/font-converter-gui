@@ -16,11 +16,10 @@ import javafx.stage.Stage;
  *
  * @author ranger
  */
-@SuppressWarnings("restriction")
 public class ChooseFileEventHandler implements EventHandler<ActionEvent> {
 
     private Stage stage;
-    TextField ttfDir;
+    private TextField ttfDir;
 
     public ChooseFileEventHandler(Stage stage, TextField fNameFld) {
         this.stage = stage;

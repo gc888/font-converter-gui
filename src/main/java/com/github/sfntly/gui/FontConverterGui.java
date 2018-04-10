@@ -25,10 +25,9 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 
 /**
- *
+ * main class
  * @author ranger
  */
-@SuppressWarnings("restriction")
 public class FontConverterGui extends Application {
 
     @Override
@@ -45,8 +44,8 @@ public class FontConverterGui extends Application {
         gridpane.getColumnConstraints().addAll(column1, column2, column3);
 
         TextField ttfDirField = new TextField();
-        ttfDirField.setTooltip(new Tooltip("Directory contains file extension(ttf)"));
-        ttfDirField.setPromptText("Directory contains file extension(ttf)");
+        ttfDirField.setTooltip(new Tooltip("Directory contains ttf file"));
+        ttfDirField.setPromptText("Directory contains ttf files");
         GridPane.setHalignment(ttfDirField, HPos.LEFT);
         gridpane.add(ttfDirField, 1, 0);
 
