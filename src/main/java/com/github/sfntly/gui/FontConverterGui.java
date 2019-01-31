@@ -99,7 +99,6 @@ public class FontConverterGui extends Application {
         sbtBtn.setOnAction(new FontSubEventHandler(ttfDirField, subsetTxtArea, stripHintCb, formatGroup));
         GridPane.setHalignment(sbtBtn, HPos.RIGHT);
         gridpane.add(sbtBtn, 2, 2);
-
         BorderPane root = new BorderPane();
         root.setCenter(gridpane);
         Scene scene = new Scene(root, 700, 350);
