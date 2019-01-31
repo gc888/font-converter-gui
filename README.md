@@ -5,6 +5,12 @@ a javafx gui for **[google sfntly](https://github.com/googlei18n/sfntly)** to he
 
 ![screenshot](img/screenshot.png)
 
+Download Install
+============
+
+Linux: https://github.com/Jijun/font-converter-gui/releases/download/v1.0/font-converter.linux.amd64.tgz
+
+MacOS: https://github.com/Jijun/font-converter-gui/releases/download/v1.0/font-converter-1.0.dmg
 
 Requirements
 ============
