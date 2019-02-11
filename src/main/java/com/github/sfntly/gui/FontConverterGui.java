@@ -44,13 +44,13 @@ public class FontConverterGui extends Application {
         gridpane.getColumnConstraints().addAll(column1, column2, column3);
 
         TextField ttfDirField = new TextField();
-        ttfDirField.setTooltip(new Tooltip("Directory contains ttf file"));
-        ttfDirField.setPromptText("Directory contains ttf files");
+        ttfDirField.setTooltip(new Tooltip("Directory containing ttf fonts"));
+        ttfDirField.setPromptText("Directory containing ttf fonts");
         GridPane.setHalignment(ttfDirField, HPos.LEFT);
         gridpane.add(ttfDirField, 1, 0);
 
         Button chooseDirBtn = new Button();
-        chooseDirBtn.setText("Choose Directory");
+        chooseDirBtn.setText("Select Directory");
         chooseDirBtn.setOnAction(new ChooseFileEventHandler(primaryStage, ttfDirField));
         gridpane.add(chooseDirBtn, 2, 0);
 
@@ -58,14 +58,14 @@ public class FontConverterGui extends Application {
         GridPane.setHalignment(ttfDirLabel, HPos.RIGHT);
         gridpane.add(ttfDirLabel, 0, 0);
 
-        Label subsetTxtLabel = new Label("Contain Chars:");
-        subsetTxtLabel.setTooltip(new Tooltip("contain chars, any chars the font file hold"));
+        Label subsetTxtLabel = new Label("Substring Chars:");
+        subsetTxtLabel.setTooltip(new Tooltip("Substring chars,  chars the font file hold"));
         GridPane.setHalignment(subsetTxtLabel, HPos.RIGHT);
         gridpane.add(subsetTxtLabel, 0, 1);
 
         TextArea subsetTxtArea = new TextArea();
-        subsetTxtArea.setTooltip(new Tooltip("leave blank  will fully convert ttf to woff/eot "));
-        subsetTxtArea.setPromptText("leave blank will default fully convert to WOFF, EOT or TTF, add some chars will convert to a subset min WOFF,EOT or TTF which contains specified chars ");
+        subsetTxtArea.setTooltip(new Tooltip("leave blank  will fully convert ttf to woff/eot"));
+        subsetTxtArea.setPromptText("default blank");
         gridpane.add(subsetTxtArea, 1, 1);
 
         CheckBox stripHintCb = new CheckBox("strip Hinting?");
@@ -102,7 +102,7 @@ public class FontConverterGui extends Application {
         BorderPane root = new BorderPane();
         root.setCenter(gridpane);
         Scene scene = new Scene(root, 700, 350);
-        primaryStage.setTitle("Font Converter (wechat:foolbeing)");
+        primaryStage.setTitle("Batch TrueType Font Converter (wechat:foolbeing)");
         primaryStage.setScene(scene);
         primaryStage.centerOnScreen();
         primaryStage.setResizable(false);

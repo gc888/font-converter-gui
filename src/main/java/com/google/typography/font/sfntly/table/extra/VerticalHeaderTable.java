@@ -26,15 +26,15 @@ import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
  * A Vertical Header table - 'vhea'.
  *
  * @author Jijun
- * @see "ISO/IEC 14496-22:2015, section 5.2.3"
+ * @see "ISO/IEC 14496-22:2019, section 5.7.9"
  */
 public final class VerticalHeaderTable extends Table {
 
   private interface Offset {
     int version = 0;
-    int Ascender = 4;
-    int Descender = 6;
-    int LineGap = 8;
+    int ascender = 4;
+    int descender = 6;
+    int lineGap = 8;
     int advanceHeightMax = 10;
     int minTopSideBearing = 12;
     int minBottomSideBearing = 14;
@@ -59,15 +59,15 @@ public final class VerticalHeaderTable extends Table {
   }
 
   public int ascender() {
-    return data.readShort(Offset.Ascender);
+    return data.readShort(Offset.ascender);
   }
 
   public int descender() {
-    return data.readShort(Offset.Descender);
+    return data.readShort(Offset.descender);
   }
 
   public int lineGap() {
-    return data.readShort(Offset.LineGap);
+    return data.readShort(Offset.lineGap);
   }
 
   public int advanceHeightMax() {
@@ -134,27 +134,27 @@ public final class VerticalHeaderTable extends Table {
     }
 
     public int ascender() {
-      return internalReadData().readShort(Offset.Ascender);
+      return internalReadData().readShort(Offset.ascender);
     }
 
     public void setAscender(int version) {
-      internalWriteData().writeShort(Offset.Ascender, version);
+      internalWriteData().writeShort(Offset.ascender, version);
     }
 
     public int descender() {
-      return internalReadData().readShort(Offset.Descender);
+      return internalReadData().readShort(Offset.descender);
     }
 
     public void setDescender(int version) {
-      internalWriteData().writeShort(Offset.Descender, version);
+      internalWriteData().writeShort(Offset.descender, version);
     }
 
     public int lineGap() {
-      return internalReadData().readShort(Offset.LineGap);
+      return internalReadData().readShort(Offset.lineGap);
     }
 
     public void setLineGap(int version) {
-      internalWriteData().writeShort(Offset.LineGap, version);
+      internalWriteData().writeShort(Offset.lineGap, version);
     }
 
     public int advanceHeightMax() {
@@ -213,7 +213,6 @@ public final class VerticalHeaderTable extends Table {
       internalWriteData().writeUShort(Offset.caretOffset, version);
     }
 
-    // TODO(stuartg): an enum?
     public int metricDataFormat() {
       return internalReadData().readUShort(Offset.metricDataFormat);
     }

@@ -51,6 +51,7 @@ public class Subsetter {
   private Set<Integer> removeTables;
   private List<Integer> newToOldGlyphs;
   private List<CMapTable.CMapId> cmapIds;
+  private Set<Integer> charsCodePoints;
 
   // inverse of mapping, computed lazily
   private Map<Integer, Integer> oldToNewGlyphs = null;
@@ -62,6 +63,9 @@ public class Subsetter {
 
   public void setGlyphs(List<Integer> glyphs) {
     this.newToOldGlyphs = new ArrayList<>(glyphs);
+  }
+  public void setCharsCodePoints(Set<Integer> charsCodePoints) {
+	  this.charsCodePoints = charsCodePoints;
   }
 
   /**
@@ -165,6 +169,11 @@ public class Subsetter {
   List<CMapTable.CMapId> cmapId() {
     return cmapIds;
   }
+  
+  Set<Integer> charsCodePoints () {
+	  	return charsCodePoints;
+  }
+  
 
   // A hook for subclasses to override, to set up tables.
   protected void setUpTables(Font.Builder fontBuilder) {}

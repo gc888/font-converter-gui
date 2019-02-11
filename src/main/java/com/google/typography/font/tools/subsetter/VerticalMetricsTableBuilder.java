@@ -27,10 +27,10 @@ import com.google.typography.font.sfntly.table.extra.VerticalHeaderTable;
  * A builder method for the vmtx (vertical metrics) table. The goal is for this logic to go into
  * the VerticalMetricsTable.Builder class, but for now is separate.
  *
- * <p>Note that this class also computes the advanceWidthMax value, which goes into the vhea table,
+ * <p>Note that this class also computes the advanceHeightMax value, which goes into the vhea table,
  * leading to somewhat awkward plumbing.
  *
- * @author Raph Levien
+ * @author JijunLiu
  */
 public class VerticalMetricsTableBuilder {
 

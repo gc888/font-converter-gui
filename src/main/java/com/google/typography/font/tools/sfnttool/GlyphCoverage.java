@@ -18,7 +18,6 @@ package com.google.typography.font.tools.sfnttool;
 
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.Tag;
-import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.table.core.CMap;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.sfntly.table.truetype.CompositeGlyph;
@@ -40,15 +39,13 @@ import java.util.Set;
  */
 public class GlyphCoverage {
 
-	public static List<Integer> getGlyphCoverage(Font font, String string) {
+	public static List<Integer> getGlyphCoverage(Font font, Set<Integer> codepoints) {
 		CMapTable cmapTable = font.getTable(Tag.cmap);
 		CMap cmap = getBestCMap(cmapTable);
 		Set<Integer> coverage = new HashSet<>();
 		coverage.add(0); // Always include notdef
-		Set<Integer> codepoints = SfStringUtils.getAllCodepoints(string);
 		for (int codepoint : codepoints) {
 			int glyphId = cmap.glyphId(codepoint);
-			System.out.printf("codepoint %d glyphId : %d\n", codepoint, glyphId);
 			touchGlyph(font, coverage, glyphId);
 		}
 		List<Integer> sortedCoverage = new ArrayList<>(coverage);
@@ -60,7 +57,6 @@ public class GlyphCoverage {
 		if (!coverage.contains(glyphId)) {
 			coverage.add(glyphId);
 			Glyph glyph = getGlyph(font, glyphId);
-			System.out.printf("glyphId %d, glyph.glyphType() %d\n" , glyphId, glyph.glyphType().ordinal());
 			if (glyph != null && glyph.glyphType() == Glyph.GlyphType.Composite) {
 				CompositeGlyph composite = (CompositeGlyph) glyph;
 				for (int i = 0; i < composite.numGlyphs(); i++) {
@@ -71,15 +67,20 @@ public class GlyphCoverage {
 	}
 
 	private static CMap getBestCMap(CMapTable cmapTable) {
-		for (CMap cmap : cmapTable) {
-			if (cmap.format() == CMap.CMapFormat.Format12.value()) {
-				return cmap;
+		// Win­dows UCS-4
+		CMap big = cmapTable.cmap(Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS4.value());
+		if (big == null) {
+			// Uni­code UCS-2
+			big = cmapTable.cmap(Font.PlatformId.Windows.value(), Font.WindowsEncodingId.UnicodeUCS2.value());
+			if (big == null) {
+				// unicode big5
+				big = cmapTable.cmap(Font.PlatformId.Unicode.value(), Font.WindowsEncodingId.Big5.value());
+				// Uni­code prc
+				if (big == null) {
+					big = cmapTable.cmap(Font.PlatformId.Unicode.value(), Font.WindowsEncodingId.PRC.value());
+				}
 			}
-		}
-		for (CMap cmap : cmapTable) {
-			if (cmap.format() == CMap.CMapFormat.Format4.value()) {
-				return cmap;
-			}
+			return big;
 		}
 		return null;
 	}

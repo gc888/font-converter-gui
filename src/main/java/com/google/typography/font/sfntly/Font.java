@@ -96,7 +96,7 @@ public class Font {
     Integer[] ttArray = {
       Tag.head, Tag.hhea, Tag.maxp, Tag.OS_2, Tag.hmtx, Tag.LTSH, Tag.VDMX, Tag.hdmx, Tag.cmap,
       Tag.fpgm, Tag.prep, Tag.cvt, Tag.loca, Tag.glyf, Tag.kern, Tag.name, Tag.post, Tag.gasp,
-      Tag.PCLT, Tag.DSIG, Tag.vhea
+      Tag.PCLT, Tag.DSIG
     };
     List<Integer> ttList = new ArrayList<>(ttArray.length);
     Collections.addAll(ttList, ttArray);

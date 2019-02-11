@@ -9,7 +9,6 @@ public final class SfStringUtils {
     Set<Integer> list = new HashSet<>();
     for (int cp, i = 0, len = s.length(); i < len; i += Character.charCount(cp)) {
       cp = s.codePointAt(i);
-      System.out.println("Character.charCount(cp)" + Character.charCount(cp));
       list.add(cp);
     }
     return list;

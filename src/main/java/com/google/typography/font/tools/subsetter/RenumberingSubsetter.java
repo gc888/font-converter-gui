@@ -19,6 +19,7 @@ package com.google.typography.font.tools.subsetter;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,11 +28,12 @@ public class RenumberingSubsetter extends Subsetter {
 
 	{
 		Set<TableSubsetter> temp = new HashSet<>();
-		temp.add(new GlyphTableSubsetter());
 		temp.add(new RenumberingCMapTableSubsetter());
+
+		temp.add(new GlyphTableSubsetter());
 		temp.add(new PostScriptTableSubsetter());
 		temp.add(new HorizontalMetricsTableSubsetter());
-		temp.add(new VerticalMetricsTableSubsetter());
+//		temp.add(new VerticalMetricsTableSubsetter());
 		tableSubsetters = temp;
 	}
 
@@ -42,7 +44,7 @@ public class RenumberingSubsetter extends Subsetter {
 	@Override
 	protected void setUpTables(Font.Builder fontBuilder) {
 		fontBuilder.newTableBuilder(Tag.hhea, font.getTable(Tag.hhea).readFontData());
-		fontBuilder.newTableBuilder(Tag.vhea, font.getTable(Tag.vhea).readFontData());
+//		fontBuilder.newTableBuilder(Tag.vhea, font.getTable(Tag.vhea).readFontData());
 		fontBuilder.newTableBuilder(Tag.maxp, font.getTable(Tag.maxp).readFontData());
 	}
 }

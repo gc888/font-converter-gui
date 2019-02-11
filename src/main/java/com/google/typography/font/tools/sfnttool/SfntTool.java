@@ -19,6 +19,7 @@ package com.google.typography.font.tools.sfnttool;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable;
 import com.google.typography.font.tools.conversion.eot.EOTWriter;
@@ -155,8 +156,10 @@ public class SfntTool {
         if (subsetString != null) {
           Subsetter subsetter = new RenumberingSubsetter(newFont, fontFactory);
           subsetter.setCMaps(cmapIds, 1);
-          List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, subsetString);
+          Set<Integer> chars = SfStringUtils.getAllCodepoints(subsetString);
+          List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, chars);
           subsetter.setGlyphs(glyphs);
+          subsetter.setCharsCodePoints(chars);
           Set<Integer> removeTables = new HashSet<>();
           // Most of the following are valid tables, but we don't renumber them yet, so strip
           removeTables.add(Tag.GDEF);

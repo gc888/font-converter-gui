@@ -26,8 +26,7 @@ import com.google.typography.font.sfntly.table.TableBasedTableBuilder;
 /**
  * A Vertical Metrics table - 'hmtx'.
  *
- * @author Stuart Gill
- * @see "ISO/IEC 14496-22:2015, section 5.2.4"
+ * @author Jijun
  */
 public final class VerticalMetricsTable extends Table {
 
@@ -36,7 +35,7 @@ public final class VerticalMetricsTable extends Table {
 
   private interface MetricOffset {
     int advanceHeight = 0;
-    int TopSideBearing = 2;
+    int topSideBearing = 2;
     int SIZE = 4;
   }
 
@@ -66,7 +65,7 @@ public final class VerticalMetricsTable extends Table {
     if (entry > numVMetrics) {
       throw new IndexOutOfBoundsException();
     }
-    return data.readShort(entry * MetricOffset.SIZE + MetricOffset.TopSideBearing);
+    return data.readShort(entry * MetricOffset.SIZE + MetricOffset.topSideBearing);
   }
 
   public int tsbTableEntry(int entry) {

@@ -24,7 +24,7 @@ import java.util.Set;
 public abstract class TableSubsetterImpl implements TableSubsetter {
 
   protected final Set<Integer> tags;
-
+  
   protected TableSubsetterImpl(Integer... tags) {
     Set<Integer> temp = new HashSet<>(tags.length);
     Collections.addAll(temp, tags);

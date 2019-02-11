@@ -8,8 +8,10 @@ package com.github.sfntly.gui;
 import com.google.typography.font.sfntly.Font;
 import com.google.typography.font.sfntly.FontFactory;
 import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.SfStringUtils;
 import com.google.typography.font.sfntly.data.WritableFontData;
 import com.google.typography.font.sfntly.table.core.CMapTable;
+import com.google.typography.font.sfntly.table.truetype.GlyphTable;
 import com.google.typography.font.tools.conversion.eot.EOTWriter;
 import com.google.typography.font.tools.conversion.woff.WoffWriter;
 import com.google.typography.font.tools.sfnttool.GlyphCoverage;
@@ -38,7 +40,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 
 /**
- * 裁剪字体的具体类
+ *  裁剪字体的具体类
  *
  * @author ranger
  */
@@ -48,7 +50,10 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 	private final TextArea subsetTxtArea;
 	private final CheckBox stripHintCb;
 	private final ToggleGroup formatGroup;
-	private String text;
+	private String hasSubstring;
+	private final String EXT_TTF = "ttf";
+	private final String EXT_WOFF = "woff";
+	private final String EXT_EOT = "eot";
 
 	public FontSubEventHandler(TextField directory, TextArea subsetTxtArea, CheckBox stripHintCb,
 			ToggleGroup formatGroup) {
@@ -68,10 +73,10 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 	public void handle(ActionEvent ae) {
 
 		if (directory == null || "".equals(directory.getText())) {
-			new AlertBox().display("TTF Directory", "Choose Font Directory");
+			new AlertBox().display("TTF Directory", "Select Font Directory");
 			return;
 		}
-		text = subsetTxtArea.getText();
+		hasSubstring = subsetTxtArea.getText();
 		final String format = (String) formatGroup.getSelectedToggle().getUserData();
 		final boolean stripHinting = stripHintCb.isSelected();
 
@@ -83,47 +88,29 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 						throws IOException {
 					File ttf = file.toFile();
 					String fontName = ttf.getName();
-					if ((fontName.endsWith(".ttf") || fontName.endsWith(".TTF")) && !fontName.contains("_min")) {
+					if ((fontName.endsWith("." + EXT_TTF) || fontName.endsWith("." + EXT_TTF.toUpperCase()))
+							&& !fontName.contains("_subset.")) {
 						existTTF = Boolean.TRUE;
 						final FontFactory fontFactory = FontFactory.getInstance();
 						Font newFont = fontFactory.loadFonts(new FileInputStream(ttf))[0];
 						String fileName = removeExt(fontName);
-						boolean hasText = text != null && text.trim().length() != 0;
+						boolean hasText = hasSubstring != null && hasSubstring.trim().length() != 0;
 						if (hasText) {
-							fileName = fileName + "_min";
+							fileName = fileName + "_subset";
 						}
-						final Font subsetFont = subsetFont(fontFactory, newFont, text, stripHinting);
-						String dirname = format;
-						mkdir(absolutePath, dirname);
-
-						if ("woff".equals(format)) {
+						mkdir(absolutePath, format);
+						final String newFileName =  absolutePath + File.separatorChar + format + File.separatorChar + fileName  ;
+						final Font subsetFont = subsetFont(fontFactory, newFont, hasSubstring, stripHinting);
+						if (EXT_WOFF.equals(format)) {
 							WoffWriter writter = new WoffWriter();
 							WritableFontData data = writter.convert(subsetFont);
-							data.copyTo(
-									new FileOutputStream(
-											absolutePath + File.separatorChar + dirname + File.separatorChar + fileName
-													+ ".woff"
-									)
-							);
-						} else if ("ttf".equals(format)) {
-							fontFactory.serializeFont(
-									subsetFont,
-									new FileOutputStream(
-											absolutePath + File.separatorChar + dirname + File.separatorChar + fileName
-													+ ".ttf"
-									)
-							);
-						} else if ("eot".equals(format)) {
-
+							data.copyTo(new FileOutputStream(newFileName + "." + EXT_WOFF));
+						} else if (EXT_TTF.equals(format)) {
+							fontFactory.serializeFont(subsetFont, new FileOutputStream(newFileName + "." + EXT_TTF));
+						} else if (EXT_EOT.equals(format)) {
 							WritableFontData eotData = new EOTWriter(Boolean.TRUE).convert(newFont);
-							eotData.copyTo(
-									new FileOutputStream(
-											absolutePath + File.separatorChar + dirname + File.separatorChar + fileName
-													+ ".eot"
-									)
-							);
+							eotData.copyTo(new FileOutputStream(newFileName+ "." + EXT_EOT));
 						}
-
 					}
 					return super.visitFile(file, attrs);
 				}
@@ -135,22 +122,20 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 			});
 
 			if (existTTF) {
-				new AlertBox().display("Task Finished", "The " + format + " files should in your directory");
+				new AlertBox().display("Convert Finished", "The " + format + " files created");
 			} else {
-				new AlertBox().display("TTF Not Found ", "your Directory not contain ttf/TTF extension files!");
+				new AlertBox().display("TTF Not Found ", "Your directory does not contain ttf files!");
 			}
 
 		} catch (IOException ex) {
-			new AlertBox(300, 200).display("Task Exception", ex.getMessage());
-
+			new AlertBox(300, 200).display("Convert Exception", ex.getMessage());
 		}
 	}
 
 	private static final Set<Integer> REMOVETABLES = new HashSet<Integer>();
 	private static final Set<Integer> HINTSREMOVETABLES = new HashSet<Integer>();
 
-	// private static final String basicChars =
-	// "\"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
+	private static final String basicChars = "\"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
 	static {
 		REMOVETABLES.add(Tag.GDEF);
 		REMOVETABLES.add(Tag.GPOS);
@@ -165,12 +150,11 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 		REMOVETABLES.add(Tag.EBDT);
 		REMOVETABLES.add(Tag.morx);
 		REMOVETABLES.add(Tag.mort);
-		REMOVETABLES.add(Tag.vmtx);
 		REMOVETABLES.add(Tag.vhea);
+		REMOVETABLES.add(Tag.vmtx);
 	}
 
 	static {
-		HINTSREMOVETABLES.addAll(REMOVETABLES);
 		HINTSREMOVETABLES.add(Tag.fpgm);
 		HINTSREMOVETABLES.add(Tag.prep);
 		HINTSREMOVETABLES.add(Tag.cvt);
@@ -178,20 +162,21 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 		HINTSREMOVETABLES.add(Tag.VDMX);
 		HINTSREMOVETABLES.add(Tag.LTSH);
 		HINTSREMOVETABLES.add(Tag.DSIG);
+		HINTSREMOVETABLES.add(Tag.vhea);
+		HINTSREMOVETABLES.add(Tag.vmtx);
 	}
 
 	private static Font subsetFont(FontFactory fontFactory, Font font, String text, boolean stripHinting)
 			throws IOException {
 		Font newFont = font;
-		if (text != null) {
+		if (text != null && !"".equals(text)) {
 			List<CMapTable.CMapId> cmapIds = new ArrayList<CMapTable.CMapId>();
 
 			cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
-			cmapIds.add(CMapTable.CMapId.WINDOWS_UCS4);
-			cmapIds.add(CMapTable.CMapId.MAC_ROMAN);
 
 			Subsetter subsetter = new RenumberingSubsetter(newFont, fontFactory);
-			List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, text);
+			final Set<Integer> codepoints = SfStringUtils.getAllCodepoints(text + basicChars);
+			List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, codepoints);
 			subsetter.setGlyphs(glyphs);
 			subsetter.setCMaps(cmapIds, 1);
 			subsetter.setRemoveTables(REMOVETABLES);
@@ -211,22 +196,21 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		final FontFactory fontFactory = FontFactory.getInstance();
 		Font font = fontFactory
-				.loadFonts(new FileInputStream("/home/ranger/Test/a3bc1b037bb15b59fce5a85cda104fe4.ttf"))[0];
+				.loadFonts(new FileInputStream("/Users/jijun/Devkit/fonts/16f6726d6445d89ad80ed47667ecac7a.ttf"))[0];
 		Font newFont = font;
-		String text="易企秀简单免费好用";
+		String text = "易企秀简单免费好用" + basicChars;
 		if (text != null) {
 			List<CMapTable.CMapId> cmapIds = new ArrayList<CMapTable.CMapId>();
 
 			cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
-			cmapIds.add(CMapTable.CMapId.WINDOWS_UCS4);
-			cmapIds.add(CMapTable.CMapId.MAC_ROMAN);
 
 			Subsetter subsetter = new RenumberingSubsetter(newFont, fontFactory);
-			List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, text);
+			Set<Integer> codepoints = SfStringUtils.getAllCodepoints(text);
+			List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(font, codepoints);
 			subsetter.setGlyphs(glyphs);
 			subsetter.setCMaps(cmapIds, 1);
 			subsetter.setRemoveTables(REMOVETABLES);
-
+			subsetter.setCharsCodePoints(codepoints);
 			newFont = subsetter.subset().build();
 		}
 
@@ -236,13 +220,13 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 			hintStripper.setRemoveTables(HINTSREMOVETABLES);
 			newFont = hintStripper.subset().build();
 		}
+		GlyphTable glyphTable = newFont.getTable(Tag.glyf);
 		WoffWriter writter = new WoffWriter();
 		WritableFontData data = writter.convert(newFont);
-		data.copyTo(new FileOutputStream("/home/ranger/Test/a3bc1b037bb15b59fce5a85cda104fe4_min.woff"));
+		data.copyTo(new FileOutputStream("/Users/jijun/Devkit/fonts/a3bc1b037bb15b59fce5a85cda104fe4_min.woff"));
 
-		fontFactory.serializeFont(
-				newFont, new FileOutputStream("/home/ranger/Test/a3bc1b037bb15b59fce5a85cda104fe4_min.ttf")
-		);
+		fontFactory.serializeFont(newFont,
+				new FileOutputStream("/Users/jijun/Devkit/fonts/a3bc1b037bb15b59fce5a85cda104fe4_min.ttf"));
 
 	}
 
