@@ -424,11 +424,14 @@ public final class PostScriptTable extends Table {
       while (index < dataLength()) {
         int strLen = data.readUByte(index);
         byte[] nameBytes = new byte[strLen];
-        data.readBytes(index + 1, nameBytes, 0, strLen);
         try {
+        	data.readBytes(index + 1, nameBytes, 0, strLen);
           names.add(new String(nameBytes, "ISO-8859-1"));
         } catch (UnsupportedEncodingException e) {
           // Can't happen; ISO-8859-1 is one of the guaranteed encodings.
+        } catch (Exception e) {
+        	//ignore exception
+        	e.printStackTrace();
         }
         index += 1 + strLen;
       }

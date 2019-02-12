@@ -42,6 +42,10 @@ public class GlyphCoverage {
 	public static List<Integer> getGlyphCoverage(Font font, Set<Integer> codepoints) {
 		CMapTable cmapTable = font.getTable(Tag.cmap);
 		CMap cmap = getBestCMap(cmapTable);
+		if(cmap == null) {
+			System.err.println("font info : " + font.toString());
+		}
+		
 		Set<Integer> coverage = new HashSet<>();
 		coverage.add(0); // Always include notdef
 		for (int codepoint : codepoints) {
@@ -80,14 +84,17 @@ public class GlyphCoverage {
 					big = cmapTable.cmap(Font.PlatformId.Unicode.value(), Font.WindowsEncodingId.PRC.value());
 				}
 			}
-			return big;
 		}
-		return null;
+		return big;
 	}
 
 	private static Glyph getGlyph(Font font, int glyphId) {
 		LocaTable locaTable = font.getTable(Tag.loca);
 		GlyphTable glyfTable = font.getTable(Tag.glyf);
+		if (locaTable == null) {
+			return null;
+		}
+		
 		int offset = locaTable.glyphOffset(glyphId);
 		int length = locaTable.glyphLength(glyphId);
 		return glyfTable.glyph(offset, length);

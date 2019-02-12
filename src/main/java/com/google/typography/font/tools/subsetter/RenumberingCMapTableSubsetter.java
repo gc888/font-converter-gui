@@ -48,9 +48,8 @@ public class RenumberingCMapTableSubsetter extends TableSubsetterImpl {
 					big = cmapTable.cmap(Font.PlatformId.Unicode.value(), Font.WindowsEncodingId.PRC.value());
 				}
 			}
-			return big;
 		}
-		return null;
+		return big;
 	}
 
 	static Map<Integer, Integer> computeMapping(Subsetter subsetter, Font font, Set<Integer> charsCodePoints) {

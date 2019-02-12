@@ -5,19 +5,6 @@
  */
 package com.github.sfntly.gui;
 
-import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.FontFactory;
-import com.google.typography.font.sfntly.Tag;
-import com.google.typography.font.sfntly.data.SfStringUtils;
-import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.core.CMapTable;
-import com.google.typography.font.sfntly.table.truetype.GlyphTable;
-import com.google.typography.font.tools.conversion.eot.EOTWriter;
-import com.google.typography.font.tools.conversion.woff.WoffWriter;
-import com.google.typography.font.tools.sfnttool.GlyphCoverage;
-import com.google.typography.font.tools.subsetter.HintStripper;
-import com.google.typography.font.tools.subsetter.RenumberingSubsetter;
-import com.google.typography.font.tools.subsetter.Subsetter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,6 +19,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.google.typography.font.sfntly.Font;
+import com.google.typography.font.sfntly.FontFactory;
+import com.google.typography.font.sfntly.Tag;
+import com.google.typography.font.sfntly.data.SfStringUtils;
+import com.google.typography.font.sfntly.data.WritableFontData;
+import com.google.typography.font.sfntly.table.core.CMapTable;
+import com.google.typography.font.tools.conversion.eot.EOTWriter;
+import com.google.typography.font.tools.conversion.woff.WoffWriter;
+import com.google.typography.font.tools.sfnttool.GlyphCoverage;
+import com.google.typography.font.tools.subsetter.HintStripper;
+import com.google.typography.font.tools.subsetter.RenumberingSubsetter;
+import com.google.typography.font.tools.subsetter.Subsetter;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.CheckBox;
@@ -40,7 +41,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 
 /**
- *  裁剪字体的具体类
+ * 裁剪字体的具体类
  *
  * @author ranger
  */
@@ -99,18 +100,25 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 							fileName = fileName + "_subset";
 						}
 						mkdir(absolutePath, format);
-						final String newFileName =  absolutePath + File.separatorChar + format + File.separatorChar + fileName  ;
-						final Font subsetFont = subsetFont(fontFactory, newFont, hasSubstring, stripHinting);
-						if (EXT_WOFF.equals(format)) {
-							WoffWriter writter = new WoffWriter();
-							WritableFontData data = writter.convert(subsetFont);
-							data.copyTo(new FileOutputStream(newFileName + "." + EXT_WOFF));
-						} else if (EXT_TTF.equals(format)) {
-							fontFactory.serializeFont(subsetFont, new FileOutputStream(newFileName + "." + EXT_TTF));
-						} else if (EXT_EOT.equals(format)) {
-							WritableFontData eotData = new EOTWriter(Boolean.TRUE).convert(newFont);
-							eotData.copyTo(new FileOutputStream(newFileName+ "." + EXT_EOT));
+						final String newFileName = absolutePath + File.separatorChar + format + File.separatorChar
+								+ fileName;
+						try {
+							final Font subsetFont = subsetFont(fontFactory, newFont, hasSubstring, stripHinting);
+							if (EXT_WOFF.equals(format)) {
+								WoffWriter writter = new WoffWriter();
+								WritableFontData data = writter.convert(subsetFont);
+								data.copyTo(new FileOutputStream(newFileName + "." + EXT_WOFF));
+							} else if (EXT_TTF.equals(format)) {
+								fontFactory
+										.serializeFont(subsetFont, new FileOutputStream(newFileName + "." + EXT_TTF));
+							} else if (EXT_EOT.equals(format)) {
+								WritableFontData eotData = new EOTWriter(Boolean.TRUE).convert(newFont);
+								eotData.copyTo(new FileOutputStream(newFileName + "." + EXT_EOT));
+							}
+						} catch (Exception e) {
+							// ignore exception
 						}
+
 					}
 					return super.visitFile(file, attrs);
 				}
@@ -155,6 +163,7 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 	}
 
 	static {
+		HINTSREMOVETABLES.addAll(REMOVETABLES);
 		HINTSREMOVETABLES.add(Tag.fpgm);
 		HINTSREMOVETABLES.add(Tag.prep);
 		HINTSREMOVETABLES.add(Tag.cvt);
@@ -195,8 +204,7 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		final FontFactory fontFactory = FontFactory.getInstance();
-		Font font = fontFactory
-				.loadFonts(new FileInputStream("/Users/jijun/Devkit/fonts/16f6726d6445d89ad80ed47667ecac7a.ttf"))[0];
+		Font font = fontFactory.loadFonts(new FileInputStream("/media/Guice/fonts/Alex-color.ttf"))[0];
 		Font newFont = font;
 		String text = "易企秀简单免费好用" + basicChars;
 		if (text != null) {
@@ -220,13 +228,13 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 			hintStripper.setRemoveTables(HINTSREMOVETABLES);
 			newFont = hintStripper.subset().build();
 		}
-		GlyphTable glyphTable = newFont.getTable(Tag.glyf);
 		WoffWriter writter = new WoffWriter();
 		WritableFontData data = writter.convert(newFont);
-		data.copyTo(new FileOutputStream("/Users/jijun/Devkit/fonts/a3bc1b037bb15b59fce5a85cda104fe4_min.woff"));
+		data.copyTo(new FileOutputStream("/media/Guice/chinesefonts/woff/a3bc1b037bb15b59fce5a85cda104fe4_min.woff"));
 
-		fontFactory.serializeFont(newFont,
-				new FileOutputStream("/Users/jijun/Devkit/fonts/a3bc1b037bb15b59fce5a85cda104fe4_min.ttf"));
+		fontFactory.serializeFont(
+				newFont, new FileOutputStream("/media/Guice/chinesefonts/woff/a3bc1b037bb15b59fce5a85cda104fe4_min.ttf")
+		);
 
 	}
 
