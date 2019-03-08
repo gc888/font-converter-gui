@@ -80,9 +80,13 @@ public class FontConverterGui extends Application {
         gridpane.add(subsetFormatLabel, 0, 2);
         
         final ToggleGroup formatGroup = new ToggleGroup();
+        RadioButton woff2 = new RadioButton("WOFF2");
+        woff2.setToggleGroup(formatGroup);
+        woff2.setSelected(true);
+        woff2.setUserData("woff2");
+
         RadioButton woff = new RadioButton("WOFF");
         woff.setToggleGroup(formatGroup);
-        woff.setSelected(true);
         woff.setUserData("woff");
         RadioButton eot = new RadioButton("EOT");
         eot.setUserData("eot");
@@ -92,7 +96,7 @@ public class FontConverterGui extends Application {
         ttf.setUserData("ttf");
         ttf.setToggleGroup(formatGroup);
 
-        HBox hbox = new HBox(woff, eot, ttf);
+        HBox hbox = new HBox(woff2, woff, eot, ttf);
         gridpane.add(hbox, 1, 2);
 
         sbtBtn.setText("Start Convert");

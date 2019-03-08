@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.tools</groupId>
 	<artifactId>font-converter-gui</artifactId>
-	<version>1.0.1</version>
+	<version>1.1</version>
 	<description>a javafx gui for google sfntly to help subset ttf fonts</description>
 	<developers>
 		<developer>
@@ -21,6 +20,12 @@
 		<maven.compiler.compilerVersion>1.8</maven.compiler.compilerVersion>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>com.typoface</groupId>
+			<artifactId>jwoff2</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>javafx</artifactId>
