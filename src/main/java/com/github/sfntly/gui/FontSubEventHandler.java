@@ -6,38 +6,20 @@
 package com.github.sfntly.gui;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.github.sfntly.writer.EOTsWriter;
 import com.github.sfntly.writer.SfntWriter;
 import com.github.sfntly.writer.TruetypeWriter;
 import com.github.sfntly.writer.Woff1Writer;
 import com.github.sfntly.writer.Woff2Writer;
-import com.google.typography.font.sfntly.Font;
-import com.google.typography.font.sfntly.FontFactory;
-import com.google.typography.font.sfntly.Tag;
-import com.google.typography.font.sfntly.data.SfStringUtils;
-import com.google.typography.font.sfntly.data.WritableFontData;
-import com.google.typography.font.sfntly.table.core.CMapTable;
-import com.google.typography.font.tools.conversion.woff.WoffWriter;
-import com.google.typography.font.tools.sfnttool.GlyphCoverage;
-import com.google.typography.font.tools.subsetter.HintStripper;
-import com.google.typography.font.tools.subsetter.RenumberingSubsetter;
-import com.google.typography.font.tools.subsetter.Subsetter;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -143,5 +125,4 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 			new AlertBox(300, 200).display("Convert Exception", ex.getMessage());
 		}
 	}
-
 }
