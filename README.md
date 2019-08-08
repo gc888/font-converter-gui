@@ -5,8 +5,11 @@ a javafx gui for **[google sfntly](https://github.com/googlei18n/sfntly)** to he
 
 ![screenshot](img/screenshot.png)
 
-Run & Install
+Build & Run & Install
 ============
+
+> for woff2 support, you should build jwoff2(https://github.com/Jijun/jwoff2)
+
 
 Run
 
