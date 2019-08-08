@@ -1,7 +1,9 @@
 package com.github.sfntly.writer;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +18,7 @@ import com.google.typography.font.tools.sfnttool.GlyphCoverage;
 import com.google.typography.font.tools.subsetter.HintStripper;
 import com.google.typography.font.tools.subsetter.RenumberingSubsetter;
 import com.google.typography.font.tools.subsetter.Subsetter;
+
 /**
  * 提供一层抽象，来把通用部分抽取出来共用。
  * 
@@ -29,16 +32,16 @@ public abstract class AbstractSfntWriter implements SfntWriter {
 	 * @param fontFactory
 	 * @param font
 	 * @param output
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	protected abstract void write(Font font, String output) throws IOException;
+	protected abstract void write(Font font, OutputStream output) throws IOException;
 
 	protected final FontFactory fontFactory = FontFactory.getInstance();
 
 	private static final Set<Integer> REMOVETABLES = new HashSet<Integer>();
 	private static final Set<Integer> HINTSREMOVETABLES = new HashSet<Integer>();
 
-	private static final String basicChars = "\"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
+//	private static final String basicChars = "\"!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}";
 	static {
 		REMOVETABLES.add(Tag.GDEF);
 		REMOVETABLES.add(Tag.GPOS);
@@ -70,14 +73,14 @@ public abstract class AbstractSfntWriter implements SfntWriter {
 		HINTSREMOVETABLES.add(Tag.vmtx);
 	}
 
-	public void subset(String inputFile, String outputFile, String subSetText, boolean stripHinting)
-			throws IOException {
-		Font subsetFont = subset(inputFile, subSetText, stripHinting);
-		write(subsetFont, outputFile);
-	}
-
 	public void writeTo(String inputFile, String outputFile, boolean stripHinting) throws IOException {
 		Font subsetFont = subset(inputFile, null, stripHinting);
+		write(subsetFont, new FileOutputStream(outputFile));
+	}
+
+	public void subset(String inputFile, OutputStream outputFile, String subSetText, boolean stripHinting)
+			throws IOException {
+		Font subsetFont = subset(inputFile, subSetText, stripHinting);
 		write(subsetFont, outputFile);
 	}
 
@@ -89,7 +92,7 @@ public abstract class AbstractSfntWriter implements SfntWriter {
 			List<CMapTable.CMapId> cmapIds = new ArrayList<CMapTable.CMapId>();
 			cmapIds.add(CMapTable.CMapId.WINDOWS_BMP);
 			Subsetter subsetter = new RenumberingSubsetter(newFont, fontFactory);
-			final Set<Integer> codepoints = SfStringUtils.getAllCodepoints(text + basicChars);
+			final Set<Integer> codepoints = SfStringUtils.getAllCodepoints(text);
 			List<Integer> glyphs = GlyphCoverage.getGlyphCoverage(newFont, codepoints);
 			subsetter.setGlyphs(glyphs);
 			subsetter.setCMaps(cmapIds, 1);

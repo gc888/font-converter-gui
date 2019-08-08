@@ -75,7 +75,7 @@ public class FontConverterGui extends Application {
         Button sbtBtn = new Button();
 
         Label subsetFormatLabel = new Label("Output Format:");
-        subsetFormatLabel.setTooltip(new Tooltip("woff/eof/ttf"));
+        subsetFormatLabel.setTooltip(new Tooltip("woff2/woff/eof/ttf"));
         GridPane.setHalignment(subsetFormatLabel, HPos.RIGHT);
         gridpane.add(subsetFormatLabel, 0, 2);
         

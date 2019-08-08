@@ -6,20 +6,15 @@
 package com.github.sfntly.gui;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.github.sfntly.writer.EOTsWriter;
-import com.github.sfntly.writer.SfntWriter;
-import com.github.sfntly.writer.TruetypeWriter;
-import com.github.sfntly.writer.Woff1Writer;
-import com.github.sfntly.writer.Woff2Writer;
+import com.github.sfntly.writer.WriterFactory;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -40,18 +35,7 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 	private final CheckBox stripHintCb;
 	private final ToggleGroup formatGroup;
 	private String hasSubstring;
-	private final String EXT_TTF = "ttf";
-	private final String EXT_WOFF = "woff";
-	private final String EXT_EOT = "eot";
-	private final String EXT_WOFF2 = "woff2";
-	Map<String, SfntWriter> holders = new HashMap<>();
-	{
-		holders.put(EXT_TTF, new TruetypeWriter());
-		holders.put(EXT_WOFF, new Woff1Writer());
-		holders.put(EXT_EOT, new EOTsWriter());
-		holders.put(EXT_WOFF2, new Woff2Writer());
-
-	}
+	private final String EXT_TTF = ".ttf";
 
 	public FontSubEventHandler(TextField directory, TextArea subsetTxtArea, CheckBox stripHintCb,
 			ToggleGroup formatGroup) {
@@ -86,7 +70,7 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 						throws IOException {
 					File ttf = file.toFile();
 					String fontName = ttf.getName();
-					if ((fontName.endsWith("." + EXT_TTF) || fontName.endsWith("." + EXT_TTF.toUpperCase()))
+					if ((fontName.endsWith(EXT_TTF) || fontName.endsWith( EXT_TTF.toUpperCase()))
 							&& !fontName.contains("_subset.")) {
 						existTTF = Boolean.TRUE;
 						String fileName = removeExt(fontName);
@@ -96,10 +80,10 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 						}
 						mkdir(absolutePath, format);
 						final String newFileName = absolutePath + File.separatorChar + format + File.separatorChar
-								+ fileName;
-						try {
-							holders.get(format)
-									.subset(ttf.getAbsolutePath(), newFileName + "." + format, hasSubstring, stripHinting);
+								+ fileName + "." + format;
+						try (FileOutputStream fos = new FileOutputStream(newFileName)) {
+							WriterFactory.getWriter(format).subset(ttf.getAbsolutePath(), fos, hasSubstring,
+									stripHinting);
 						} catch (Exception e) {
 							e.printStackTrace();
 							// ignore exception
@@ -118,7 +102,7 @@ public class FontSubEventHandler implements EventHandler<ActionEvent> {
 			if (existTTF) {
 				new AlertBox().display("Convert Finished", "The " + format + " files created");
 			} else {
-				new AlertBox().display("TTF Not Found ", "Your directory does not contain ttf files!");
+				new AlertBox().display("TTF files Not Found ", "Your directory does not contain ttf files!");
 			}
 
 		} catch (IOException ex) {
